@@ -1,0 +1,36 @@
+﻿services:
+  api:
+    container_name: api-agenda
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 5004:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on: ["sqlserver"]
+    networks:
+      network-agenda:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_SA_PASSWORD=SenhaF0rte!2025"
+    volumes:
+      - "api-agenda-mssql-server:/var/opt/mssql"
+    ports:
+      - 1200:1433
+    networks:
+      network-agenda:
+        aliases:
+          - sqlserver-db
+
+volumes:
+  api-agenda-mssql-server:
+
+networks:
+  network-agenda:
+    driver: bridge
